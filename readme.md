@@ -87,3 +87,13 @@ res.status(statusCode)
 
 14.  สร้าง ข้อมูลใน prisma.user.create ({data:newUser})
 const result = await prisma.user.create({ data: newUser})
+
+15. ทำ login const {identity, pass} = req.body
+-กำหนหด validation
+-check email or mobile
+-passowrd by bcryptjs compare(password, founduser.password)
+
+- jsonwebtoken
+    const payload = {id: foundUser.id}
+    const token = jwt.sign(payload, process.env.JWT_SECRET,{
+        expiresIn : '15d'})
