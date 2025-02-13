@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const createError = require("../utils/createError");
+const tryCatch = require('../utils/tryCatch');
 
 
 function checkEmailorMobile(identity) {
@@ -71,8 +72,10 @@ module.exports.register = async (req, res, next) => {
 
 
 }
-module.exports.login = async(req, res,next) => {
-try {
+
+//rapperfunction
+module.exports.login = tryCatch(async (req, res, next) => {
+
     const { identity, password } = req.body;
 
     //validation
@@ -86,31 +89,30 @@ try {
 
     //find user
     const foundUser = await prisma.user.findUnique({
-        where:{[identityKey]: identity}
+        where: { [identityKey]: identity }
     })
     console.log(foundUser)
 
-    if(!foundUser){
-        createError(401,"Invalid Login")
+    if (!foundUser) {
+        createError(401, "Invalid Login")
     }
 
     // Check password bcrypt มาช่วย
     let pwOk = await bcrypt.compare(password, foundUser.password)
-    if(!pwOk){
-        createError(401,"Invalid Login")
+    if (!pwOk) {
+        createError(401, "Invalid Login")
     }
 
     //create jsonwebtoken
-    const payload = {id: foundUser.id}
-    const token = jwt.sign(payload, process.env.JWT_SECRET,{
-        expiresIn : '15d'})
+    const payload = { id: foundUser.id }
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: '15d'
+    })
 
-    res.json({ msg: 'Login Successfully', token:token, user: foundUser })
-} catch (error) {
-    next(error)
-}
+    res.json({ msg: 'Login Successfully', token: token, user: foundUser })
 
 }
+)
 module.exports.getMe = (req, res) => {
     res.json({ msg: 'Getme .....' })
 }
