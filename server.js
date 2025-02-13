@@ -5,8 +5,10 @@ const express = require("express");
 const notFound = require('./middlewares/notFound');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 const authRoute = require('./routes/auth-route');
-const app = express();
 
+
+const app = express();
+app.use(express.json())
 
 
 
